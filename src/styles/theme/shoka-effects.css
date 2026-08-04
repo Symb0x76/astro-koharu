@@ -204,7 +204,7 @@ kbd {
   display: inline-block;
   padding: 0.15em 0.4em;
   font-size: 0.85em;
-  font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
+  font-family: "Maple Mono NF CN", ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
   line-height: 1.2;
   color: hsl(0 0% 30%);
   background: hsl(0 0% 97%);

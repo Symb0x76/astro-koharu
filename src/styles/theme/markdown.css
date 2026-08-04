@@ -112,7 +112,7 @@
     opacity: 0.5;
 
     /* 等宽字体 */
-    font-family: ui-monospace, SFMono-Regular, monospace;
+    font-family: "Maple Mono NF CN", ui-monospace, SFMono-Regular, monospace;
 
     transition: opacity 0.3s ease;
   }
