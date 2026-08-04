@@ -22,8 +22,11 @@ site:
   #   type: text
   #   text: 我的博客
   # headerImage: # 首页/文章顶图配置（可选）：src 大图（1200w+）、srcSmall 小图（800w，响应式 srcset）
+  #   themed: true # 开关：true 时亮/暗模式使用不同顶图（随主题切换动效过渡）；false 时亮暗共用 src/srcSmall
   #   src: /img/site_header_1920.webp
   #   srcSmall: /img/site_header_800.webp
+  #   darkSrc: /img/site_header_dark.webp
+  #   darkSrcSmall: /img/site_header_dark_small.webp
   author: Author # 作者名称 - 请修改为你的名字
   url: https://koharu.cosine.ren # 站点 URL 用于 RSS 和 SEO
   defaultOgImage: /img/avatar.webp # 默认 Open Graph 图片
