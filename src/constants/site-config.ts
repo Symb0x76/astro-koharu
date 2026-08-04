@@ -22,6 +22,7 @@ import type {
   ChristmasConfig,
   CommentConfig,
   DevConfig,
+  HeaderImageConfig,
   LogoConfig,
   MusicConfig,
   RouterItem,
@@ -116,6 +117,12 @@ export const logoConfig: Required<LogoConfig> = {
   type: yamlConfig.site.logo?.type ?? (siteConfig.showLogo ? 'image' : 'text'),
   text: yamlConfig.site.logo?.text ?? siteConfig.alternate ?? siteConfig.title,
   src: yamlConfig.site.logo?.src ?? '',
+};
+
+// Map YAML header image config (banner), falls back to the theme's built-in images
+export const headerImageConfig: Required<HeaderImageConfig> = {
+  src: yamlConfig.site.headerImage?.src ?? '/img/site_header_1920.webp',
+  srcSmall: yamlConfig.site.headerImage?.srcSmall ?? '/img/site_header_800.webp',
 };
 
 // Bangumi media tracking config — null when disabled (section commented out in YAML)

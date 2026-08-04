@@ -19,6 +19,8 @@ export interface SiteBasicConfig {
   showLogo?: boolean;
   /** Logo 配置：支持文字/图片，缺省回退 showLogo 开关行为 */
   logo?: LogoConfig;
+  /** 首页/文章顶图（banner）配置，缺省用主题内置图 */
+  headerImage?: HeaderImageConfig;
   author?: string;
   url: string;
   startYear?: number;
@@ -32,6 +34,17 @@ export interface SiteBasicConfig {
   icp?: string | { text: string; link?: string };
   /** Enable slug transliteration (converts CJK characters to pinyin/romaji) @default false */
   enableSlugTransliteration?: boolean;
+}
+
+// =============================================================================
+// Header Image (banner) Configuration
+// =============================================================================
+
+export interface HeaderImageConfig {
+  /** 大图路径（相对 public，1200w+） */
+  src: string;
+  /** 小图路径（相对 public，800w，用于响应式 srcset） */
+  srcSmall: string;
 }
 
 // =============================================================================

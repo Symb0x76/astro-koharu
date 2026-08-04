@@ -1,6 +1,6 @@
 ---
 import { Routes } from '@constants/router';
-import { createArticleStatsConfig, siteConfig } from '@constants/site-config';
+import { createArticleStatsConfig, headerImageConfig, siteConfig } from '@constants/site-config';
 import { getPostReadingTime } from '@lib/content/posts';
 import { displayDate } from '@lib/date';
 import { getLqipStyle } from '@lib/lqip';
@@ -27,7 +27,7 @@ const readState = data ? getPostReadingTime(data) : null;
 const isDraft = import.meta.env.DEV && draft === true;
 
 // 获取横幅图片的 LQIP 样式
-const bannerLqipStyle = compact ? undefined : getLqipStyle('/img/site_header_1920.webp');
+const bannerLqipStyle = compact ? undefined : getLqipStyle(headerImageConfig.src);
 
 const locale = getLocaleFromUrl(Astro.url.pathname);
 
@@ -135,11 +135,11 @@ const copyFailedLabel = t(locale, 'common.copyFailed');
     style={bannerLqipStyle}
   >
     <img
-      src="/img/site_header_1920.webp"
+      src={headerImageConfig.src}
       alt="cover"
       class="h-full w-full object-cover"
       sizes="50vw"
-      srcset="/img/site_header_800.webp 800w,/img/site_header_1920.webp 1200w"
+      srcset={`${headerImageConfig.srcSmall} 800w,${headerImageConfig.src} 1200w`}
       loading="eager"
       fetchpriority="high"
       decoding="async"
