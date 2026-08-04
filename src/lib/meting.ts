@@ -34,6 +34,16 @@ const URL_RULES: [RegExp, string, string][] = [
   [/y\.qq\.com.*playlist\/(\w+)/, 'tencent', 'playlist'],
 ];
 
+/** Direct-playable audio file URLs (mp3/flac/ogg/m4a/...), no platform resolution needed */
+const DIRECT_AUDIO_RE = /\.(mp3|flac|ogg|oga|m4a|aac|wav|opus)(?:[?#].*)?$/i;
+
+/** 直链音频的元数据注册表：歌单组件解析出真实标题/创作者/封面/歌词后按 URL 注册，播放器合成曲目时优先使用 */
+const directMetaRegistry = new Map<string, { name: string; artist: string; pic: string; lrc: string }>();
+
+export function registerDirectMetadata(url: string, meta: { name: string; artist: string; pic: string; lrc: string }): void {
+  directMetaRegistry.set(url, meta);
+}
+
 /** Parse a music platform URL into server/type/id triple. */
 export function parseMusicUrl(url: string): ParsedUrl | null {
   for (const [regex, server, type] of URL_RULES) {
@@ -41,6 +51,9 @@ export function parseMusicUrl(url: string): ParsedUrl | null {
     if (match?.[1]) {
       return { server, type, id: match[1] };
     }
+  }
+  if (DIRECT_AUDIO_RE.test(url)) {
+    return { server: 'direct', type: 'file', id: url };
   }
   return null;
 }
@@ -86,6 +99,20 @@ function isMetingSong(obj: unknown): obj is MetingSong {
 
 /** Fetch songs from Meting API for a single parsed URL. */
 export async function fetchMeting(server: string, type: string, id: string, apiUrl?: string): Promise<MetingSong[]> {
+  if (server === 'direct') {
+    const filename = decodeURIComponent(id.split('/').pop()?.split(/[?#]/)[0] ?? id);
+    const meta = directMetaRegistry.get(id);
+    return [
+      {
+        name: meta?.name ?? filename,
+        artist: meta?.artist ?? '',
+        url: id,
+        pic: meta?.pic ?? '',
+        lrc: meta?.lrc ?? '',
+      },
+    ];
+  }
+
   const cacheKey = getCacheKey(server, type, id);
   const cached = getFromCache(cacheKey);
   if (cached) return cached;

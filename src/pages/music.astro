@@ -1,0 +1,13 @@
+---
+import PageLayout from '../layouts/PageLayout.astro';
+import MusicList from '../components/music/MusicList';
+
+const frontmatter = {
+  title: '歌单',
+  description: '我喜欢的音乐',
+};
+---
+
+<PageLayout frontmatter={frontmatter}>
+  <MusicList client:load />
+</PageLayout>
