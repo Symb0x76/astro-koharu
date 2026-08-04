@@ -6,7 +6,7 @@ import { ChristmasOrnamentToggle } from '@components/christmas/ChristmasOrnament
 import { MobilePostHeader } from '@components/layout/MobilePostHeader';
 import { MenuIcon } from '@components/ui/MenuIcon';
 import { MAX_WIDTH } from '@constants/layout';
-import { christmasConfig, siteConfig } from 'constants/site-config';
+import { christmasConfig, logoConfig, siteConfig } from 'constants/site-config';
 import { getLocaleFromUrl } from '@/i18n';
 import Navigator from './Navigator';
 
@@ -16,7 +16,7 @@ interface Props {
 }
 
 const { isPostPage = false, tocNumbering = true } = Astro.props;
-const { alternate, title, showLogo } = siteConfig;
+const { alternate, title } = siteConfig;
 const locale = getLocaleFromUrl(Astro.url.pathname);
 ---
 
@@ -35,7 +35,15 @@ const locale = getLocaleFromUrl(Astro.url.pathname);
       title={alternate || title}
       aria-label={alternate || title}
     >
-      {showLogo ? <LogoSvg className="h-8" /> : <p class="logo-text">{alternate || title}</p>}
+      {logoConfig.type === 'image' ? (
+        logoConfig.src ? (
+          <img src={logoConfig.src} alt={logoConfig.text} class="h-8" />
+        ) : (
+          <LogoSvg className="h-8" />
+        )
+      ) : (
+        <p class="logo-text">{logoConfig.text}</p>
+      )}
     </a>
     <!-- Mobile: MobilePostHeader (shows heading on post pages, logo otherwise) -->
     <div class="tablet:flex tablet:grow hidden items-center justify-center">
@@ -43,9 +51,9 @@ const locale = getLocaleFromUrl(Astro.url.pathname);
         client:only="react"
         isPostPage={isPostPage}
         enableNumbering={tocNumbering}
-        logoElement={showLogo ? 'svg' : 'text'}
-        logoText={alternate || title}
-        logoSrc={logoSrc}
+        logoElement={logoConfig.type === 'image' ? 'svg' : 'text'}
+        logoText={logoConfig.text}
+        logoSrc={logoConfig.src || logoSrc}
       />
     </div>
     <Navigator client:load currentPath={Astro.url.pathname} locale={locale} />

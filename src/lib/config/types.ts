@@ -15,7 +15,10 @@ export interface SiteBasicConfig {
   name: string;
   description?: string;
   avatar?: string;
+  /** 兼容开关：true=内置 svg 图片 Logo，false=文字 Logo（被 logo 配置覆盖时忽略） */
   showLogo?: boolean;
+  /** Logo 配置：支持文字/图片，缺省回退 showLogo 开关行为 */
+  logo?: LogoConfig;
   author?: string;
   url: string;
   startYear?: number;
@@ -29,6 +32,19 @@ export interface SiteBasicConfig {
   icp?: string | { text: string; link?: string };
   /** Enable slug transliteration (converts CJK characters to pinyin/romaji) @default false */
   enableSlugTransliteration?: boolean;
+}
+
+// =============================================================================
+// Logo Configuration
+// =============================================================================
+
+export interface LogoConfig {
+  /** 'image' — 图片 Logo（src 缺省用主题内置 svg）；'text' — 文字 Logo */
+  type: 'image' | 'text';
+  /** 文字 Logo 内容（type=text 时使用，默认取 site.alternate） */
+  text?: string;
+  /** 图片 Logo 路径（type=image 时使用，默认主题内置 svg） */
+  src?: string;
 }
 
 // =============================================================================

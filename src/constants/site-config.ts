@@ -22,6 +22,7 @@ import type {
   ChristmasConfig,
   CommentConfig,
   DevConfig,
+  LogoConfig,
   MusicConfig,
   RouterItem,
   SocialConfig,
@@ -108,6 +109,13 @@ export const bgmConfig: { enabled: boolean; metingApi?: string; audio: BgmAudioG
 export const musicConfig: MusicConfig = {
   openlistOrigin: yamlConfig.music?.openlistOrigin ?? 'https://openlist.symb0x76.top',
   path: yamlConfig.music?.path ?? '/音乐',
+};
+
+// Map YAML logo config (image/text), falls back to legacy showLogo switch
+export const logoConfig: Required<LogoConfig> = {
+  type: yamlConfig.site.logo?.type ?? (siteConfig.showLogo ? 'image' : 'text'),
+  text: yamlConfig.site.logo?.text ?? siteConfig.alternate ?? siteConfig.title,
+  src: yamlConfig.site.logo?.src ?? '',
 };
 
 // Bangumi media tracking config — null when disabled (section commented out in YAML)
