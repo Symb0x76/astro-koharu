@@ -21,6 +21,9 @@ site:
   # logo: # Logo 配置（可选）：type: image|text；text 为文字内容；src 为图片路径（缺省用内置 svg）
   #   type: text
   #   text: 我的博客
+  # headerImage: # 首页/文章顶图配置（可选）：src 大图（1200w+）、srcSmall 小图（800w，响应式 srcset）
+  #   src: /img/site_header_1920.webp
+  #   srcSmall: /img/site_header_800.webp
   author: Author # 作者名称 - 请修改为你的名字
   url: https://koharu.cosine.ren # 站点 URL 用于 RSS 和 SEO
   defaultOgImage: /img/avatar.webp # 默认 Open Graph 图片
