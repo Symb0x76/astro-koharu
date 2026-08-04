@@ -15,8 +15,8 @@
 /* === 暗色模式 (Dark Mode) === */
 html.dark body {
   /* 主题色 - 暗色模式下使用更亮的颜色以保持对比度 */
-  --waline-theme-color: #ed788c;
-  --waline-active-color: #f09aab;
+  --waline-theme-color: #60a5fa;
+  --waline-active-color: #93c5fd;
 
   --waline-color: #8e8e8e;
   --waline-disable-bg-color: hsl(0, 0%, 70%);
