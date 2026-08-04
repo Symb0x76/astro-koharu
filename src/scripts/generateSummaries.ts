@@ -33,10 +33,11 @@ const OUTPUT_FILE = 'src/assets/summaries.json';
 const CACHE_VERSION = '1';
 
 // LLM API settings (OpenAI-compatible)
-// Works with: LM Studio, Ollama, OpenAI, etc.
-const API_BASE_URL = 'http://127.0.0.1:1234/v1/';
-const API_KEY = 'lm-studio'; // LM Studio doesn't require a real key
-const DEFAULT_MODEL = 'qwen/qwen3-4b-2507';
+// Works with: LM Studio, Ollama, OpenAI, DeepSeek, etc.
+// 可用环境变量覆盖：LLM_BASE_URL / LLM_API_KEY / LLM_MODEL（如 .env 中配置）
+const API_BASE_URL = process.env.LLM_BASE_URL ?? 'http://127.0.0.1:1234/v1/';
+const API_KEY = process.env.LLM_API_KEY ?? 'lm-studio'; // LM Studio doesn't require a real key
+const DEFAULT_MODEL = process.env.LLM_MODEL ?? 'qwen/qwen3-4b-2507';
 
 // --------- Parse CLI Arguments ---------
 function parseArgs(): { model: string; force: boolean } {
@@ -131,7 +132,9 @@ function extractSlug(filePath: string, link?: string): string {
 
 async function checkApiRunning(): Promise<boolean> {
   try {
-    const response = await fetch(`${API_BASE_URL}models`);
+    const response = await fetch(`${API_BASE_URL}models`, {
+      headers: { Authorization: `Bearer ${API_KEY}` },
+    });
     return response.ok;
   } catch {
     return false;
