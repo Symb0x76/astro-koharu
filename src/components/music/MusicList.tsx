@@ -5,10 +5,11 @@
  * 注册到 meting.ts 的直链元数据表，喂给主题自带 AudioPlayer 播放。
  * 数据源由 site.yaml 的 music 段配置（openlistOrigin / path）。
  */
-import { parseWebStream } from 'music-metadata';
-import { useEffect, useState } from 'react';
+
 import { AudioPlayer } from '@components/markdown/AudioPlayer';
 import { registerDirectMetadata } from '@lib/meting';
+import { parseWebStream } from 'music-metadata';
+import { useEffect, useState } from 'react';
 
 const AUDIO_EXT = /\.(mp3|flac|ogg|oga|m4a|aac|wav|opus)$/i;
 /** 只拉取文件头部区间即可覆盖 ID3v2/Vorbis/FLAC 块/MP4 moov 等标签区（skipPostHeaders 免读文件尾） */
@@ -84,7 +85,12 @@ async function collectSongs(origin: string, dirPath: string, out: SongEntry[]): 
     if (f.is_dir) {
       await collectSongs(origin, `${dirPath}/${f.name}`, out);
     } else if (AUDIO_EXT.test(f.name)) {
-      out.push({ path: `${dirPath}/${f.name}`, url: fileUrl(origin, `${dirPath}/${f.name}`), size: f.size ?? 0, modified: f.modified ?? '' });
+      out.push({
+        path: `${dirPath}/${f.name}`,
+        url: fileUrl(origin, `${dirPath}/${f.name}`),
+        size: f.size ?? 0,
+        modified: f.modified ?? '',
+      });
     }
   }
 }
@@ -129,10 +135,7 @@ async function parseSongMeta(song: SongEntry): Promise<SongMeta> {
   const fallbackArtist = dashIndex > 0 ? base.slice(dashIndex + 3) : '';
   const meta: SongMeta = {
     name: common.title ?? fallbackTitle,
-    artist:
-      common.artist ??
-      (common.artists && common.artists.length > 0 ? common.artists.join(', ') : '') ??
-      fallbackArtist,
+    artist: common.artist ?? (common.artists && common.artists.length > 0 ? common.artists.join(', ') : '') ?? fallbackArtist,
     pic: picture ? `data:${picture.format};base64,${u8ToBase64(picture.data)}` : '',
     lrc: lyrics,
   };
@@ -197,7 +200,7 @@ export default function MusicList({ origin, path }: MusicListProps) {
     return () => {
       cancelled = true;
     };
-  }, []);
+  }, [origin, path]);
 
   useEffect(() => {
     if (element && groups.length > 0) {
@@ -206,9 +209,24 @@ export default function MusicList({ origin, path }: MusicListProps) {
     }
   }, [element, groups]);
 
-  if (loading) return <div className="audio-player audio-player-loading"><span>正在加载歌单…</span></div>;
-  if (error) return <div className="audio-player audio-player-error"><span>歌单加载失败：{error}</span></div>;
-  if (groups.length === 0) return <div className="audio-player audio-player-empty"><span>歌单为空</span></div>;
+  if (loading)
+    return (
+      <div className="audio-player audio-player-loading">
+        <span>正在加载歌单…</span>
+      </div>
+    );
+  if (error)
+    return (
+      <div className="audio-player audio-player-error">
+        <span>歌单加载失败：{error}</span>
+      </div>
+    );
+  if (groups.length === 0)
+    return (
+      <div className="audio-player audio-player-empty">
+        <span>歌单为空</span>
+      </div>
+    );
 
   return (
     <div className="not-prose">
