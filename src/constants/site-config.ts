@@ -22,6 +22,7 @@ import type {
   ChristmasConfig,
   CommentConfig,
   DevConfig,
+  MusicConfig,
   RouterItem,
   SocialConfig,
 } from '@lib/config/types';
@@ -101,6 +102,12 @@ export const bgmConfig: { enabled: boolean; metingApi?: string; audio: BgmAudioG
   enabled: yamlConfig.bgm?.enabled ?? (yamlConfig.bgm?.audio?.length ?? 0) > 0,
   metingApi: yamlConfig.bgm?.metingApi,
   audio: yamlConfig.bgm?.audio ?? [],
+};
+
+// Map YAML music page config (openlist playlist source)
+export const musicConfig: MusicConfig = {
+  openlistOrigin: yamlConfig.music?.openlistOrigin ?? 'https://openlist.symb0x76.top',
+  path: yamlConfig.music?.path ?? '/音乐',
 };
 
 // Bangumi media tracking config — null when disabled (section commented out in YAML)

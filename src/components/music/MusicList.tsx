@@ -1,16 +1,15 @@
 /**
  * MusicList — 歌单页组件。
- * 从 openlist.symb0x76.top（Alist）的 /音乐 目录递归读取音频文件，
+ * 从配置的 openlist（Alist）目录递归读取音频文件，
  * 用 music-metadata 解析内嵌元数据（标题/创作者/封面/歌词，Range 分段请求 + localStorage 缓存），
  * 注册到 meting.ts 的直链元数据表，喂给主题自带 AudioPlayer 播放。
+ * 数据源由 site.yaml 的 music 段配置（openlistOrigin / path）。
  */
 import { parseWebStream } from 'music-metadata';
 import { useEffect, useState } from 'react';
 import { AudioPlayer } from '@components/markdown/AudioPlayer';
 import { registerDirectMetadata } from '@lib/meting';
 
-const OPENLIST_ORIGIN = 'https://openlist.symb0x76.top';
-const MUSIC_PATH = '/音乐';
 const AUDIO_EXT = /\.(mp3|flac|ogg|oga|m4a|aac|wav|opus)$/i;
 /** 只拉取文件头部区间即可覆盖 ID3v2/Vorbis/FLAC 块/MP4 moov 等标签区（skipPostHeaders 免读文件尾） */
 const META_RANGE_BYTES = 2 * 1024 * 1024;
@@ -37,8 +36,8 @@ interface SongMeta {
   lrc: string;
 }
 
-async function listDir(path: string, page: number): Promise<AlistEntry[]> {
-  const res = await fetch(`${OPENLIST_ORIGIN}/api/fs/list`, {
+async function listDir(origin: string, path: string, page: number): Promise<AlistEntry[]> {
+  const res = await fetch(`${origin}/api/fs/list`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ path, password: '', page, per_page: 100, refresh: false }),
@@ -49,18 +48,18 @@ async function listDir(path: string, page: number): Promise<AlistEntry[]> {
   return data.data?.content ?? [];
 }
 
-async function listAll(path: string): Promise<AlistEntry[]> {
+async function listAll(origin: string, path: string): Promise<AlistEntry[]> {
   const entries: AlistEntry[] = [];
   for (let page = 1; ; page++) {
-    const batch = await listDir(path, page);
+    const batch = await listDir(origin, path, page);
     entries.push(...batch);
     if (batch.length < 100) break;
   }
   return entries;
 }
 
-function fileUrl(path: string): string {
-  return `${OPENLIST_ORIGIN}/d/${path.split('/').map(encodeURIComponent).join('/')}`;
+function fileUrl(origin: string, path: string): string {
+  return `${origin}/d/${path.split('/').map(encodeURIComponent).join('/')}`;
 }
 
 interface SongEntry {
@@ -79,13 +78,13 @@ function u8ToBase64(u8: Uint8Array): string {
   return btoa(bin);
 }
 
-async function collectSongs(dirPath: string, out: SongEntry[]): Promise<void> {
-  const entries = await listAll(dirPath);
+async function collectSongs(origin: string, dirPath: string, out: SongEntry[]): Promise<void> {
+  const entries = await listAll(origin, dirPath);
   for (const f of entries) {
     if (f.is_dir) {
-      await collectSongs(`${dirPath}/${f.name}`, out);
+      await collectSongs(origin, `${dirPath}/${f.name}`, out);
     } else if (AUDIO_EXT.test(f.name)) {
-      out.push({ path: `${dirPath}/${f.name}`, url: fileUrl(`${dirPath}/${f.name}`), size: f.size ?? 0, modified: f.modified ?? '' });
+      out.push({ path: `${dirPath}/${f.name}`, url: fileUrl(origin, `${dirPath}/${f.name}`), size: f.size ?? 0, modified: f.modified ?? '' });
     }
   }
 }
@@ -157,7 +156,14 @@ async function parseAllWithConcurrency(songs: SongEntry[]): Promise<void> {
   await Promise.all(workers);
 }
 
-export default function MusicList() {
+interface MusicListProps {
+  /** openlist（Alist）服务地址 */
+  origin: string;
+  /** 歌单目录路径 */
+  path: string;
+}
+
+export default function MusicList({ origin, path }: MusicListProps) {
   const [groups, setGroups] = useState<AudioGroup[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -169,17 +175,17 @@ export default function MusicList() {
     (async () => {
       try {
         const songs: SongEntry[] = [];
-        await collectSongs(MUSIC_PATH, songs);
+        await collectSongs(origin, path, songs);
         if (cancelled) return;
         await parseAllWithConcurrency(songs);
         if (cancelled) return;
-        const root = songs.filter((s) => !s.path.slice(MUSIC_PATH.length + 1).includes('/'));
-        const subs = songs.filter((s) => s.path.slice(MUSIC_PATH.length + 1).includes('/'));
+        const root = songs.filter((s) => !s.path.slice(path.length + 1).includes('/'));
+        const subs = songs.filter((s) => s.path.slice(path.length + 1).includes('/'));
         const g: AudioGroup[] = [];
         if (root.length > 0) g.push({ title: '音乐', list: root.map((s) => s.url) });
-        const subTitles = new Set(subs.map((s) => s.path.slice(MUSIC_PATH.length + 1).split('/')[0]));
+        const subTitles = new Set(subs.map((s) => s.path.slice(path.length + 1).split('/')[0]));
         for (const title of subTitles) {
-          g.push({ title, list: subs.filter((s) => s.path.startsWith(`${MUSIC_PATH}/${title}/`)).map((s) => s.url) });
+          g.push({ title, list: subs.filter((s) => s.path.startsWith(`${path}/${title}/`)).map((s) => s.url) });
         }
         if (!cancelled) setGroups(g);
       } catch (e: unknown) {

@@ -596,6 +596,17 @@ export interface DevConfig {
 }
 
 // =============================================================================
+// Music Page (openlist playlist) Configuration
+// =============================================================================
+
+export interface MusicConfig {
+  /** openlist（Alist）服务地址，例如 https://openlist.example.com */
+  openlistOrigin: string;
+  /** 歌单目录路径，例如 /音乐 */
+  path: string;
+}
+
+// =============================================================================
 // BGM (Background Music) Configuration
 // =============================================================================
 
@@ -668,6 +679,8 @@ export interface SiteYamlConfig {
   categoryMap?: Record<string, string>; // TODO: i18n, now use eg: { '随笔': 'life' }
   /** Background music player configuration */
   bgm?: BgmConfig;
+  /** Music page playlist source (openlist/Alist) */
+  music?: MusicConfig;
   /** Bangumi media tracking page — comment out to disable */
   bangumi?: BangumiConfig;
   christmas?: ChristmasConfig;
