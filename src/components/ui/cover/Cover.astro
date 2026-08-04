@@ -134,19 +134,63 @@ const copyFailedLabel = t(locale, 'common.copyFailed');
     id="banner-box"
     style={bannerLqipStyle}
   >
-    <img
-      src={headerImageConfig.src}
-      alt="cover"
-      class="h-full w-full object-cover"
-      sizes="50vw"
-      srcset={`${headerImageConfig.srcSmall} 800w,${headerImageConfig.src} 1200w`}
-      loading="eager"
-      fetchpriority="high"
-      decoding="async"
-    />
+    {
+      headerImageConfig.themed && headerImageConfig.darkSrc ? (
+        <>
+          <img
+            src={headerImageConfig.src}
+            alt="cover"
+            class="cover-img cover-img-light h-full w-full object-cover"
+            sizes="50vw"
+            srcset={`${headerImageConfig.srcSmall} 800w,${headerImageConfig.src} 1200w`}
+            loading="eager"
+            fetchpriority="high"
+            decoding="async"
+          />
+          <img
+            src={headerImageConfig.darkSrc}
+            alt="cover"
+            class="cover-img cover-img-dark h-full w-full object-cover"
+            sizes="50vw"
+            srcset={`${headerImageConfig.darkSrcSmall} 800w,${headerImageConfig.darkSrc} 1200w`}
+            loading="eager"
+            fetchpriority="high"
+            decoding="async"
+          />
+        </>
+      ) : (
+        <img
+          src={headerImageConfig.src}
+          alt="cover"
+          class="h-full w-full object-cover"
+          sizes="50vw"
+          srcset={`${headerImageConfig.srcSmall} 800w,${headerImageConfig.src} 1200w`}
+          loading="eager"
+          fetchpriority="high"
+          decoding="async"
+        />
+      )
+    }
   </div>
   <WaveSvg />
 </div>
+
+<style>
+  /* 亮/暗双顶图：随 .dark 类切换，主题过渡的渐变扫过动效负责动画揭示 */
+  .cover-img {
+    position: absolute;
+    inset: 0;
+  }
+  .cover-img-dark {
+    display: none;
+  }
+  .dark .cover-img-dark {
+    display: block;
+  }
+  .dark .cover-img-light {
+    display: none;
+  }
+</style>
 
 <script>
   function installCoverCopyButtons() {

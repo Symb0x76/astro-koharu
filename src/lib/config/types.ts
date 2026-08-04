@@ -45,6 +45,12 @@ export interface HeaderImageConfig {
   src: string;
   /** 小图路径（相对 public，800w，用于响应式 srcset） */
   srcSmall: string;
+  /** 开关：true 时亮/暗模式使用不同顶图（随主题切换动效过渡）；false 时亮暗共用 src/srcSmall */
+  themed?: boolean;
+  /** 暗色模式大图（themed=true 时使用） */
+  darkSrc?: string;
+  /** 暗色模式小图（themed=true 时使用） */
+  darkSrcSmall?: string;
 }
 
 // =============================================================================

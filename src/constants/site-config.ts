@@ -123,6 +123,9 @@ export const logoConfig: Required<LogoConfig> = {
 export const headerImageConfig: Required<HeaderImageConfig> = {
   src: yamlConfig.site.headerImage?.src ?? '/img/site_header_1920.webp',
   srcSmall: yamlConfig.site.headerImage?.srcSmall ?? '/img/site_header_800.webp',
+  themed: yamlConfig.site.headerImage?.themed ?? false,
+  darkSrc: yamlConfig.site.headerImage?.darkSrc ?? '',
+  darkSrcSmall: yamlConfig.site.headerImage?.darkSrcSmall ?? '',
 };
 
 // Bangumi media tracking config — null when disabled (section commented out in YAML)
