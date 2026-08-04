@@ -175,23 +175,6 @@ const copyFailedLabel = t(locale, 'common.copyFailed');
   <WaveSvg />
 </div>
 
-<style>
-  /* 亮/暗双顶图：随 .dark 类切换，主题过渡的渐变扫过动效负责动画揭示 */
-  .cover-img {
-    position: absolute;
-    inset: 0;
-  }
-  .cover-img-dark {
-    display: none;
-  }
-  .dark .cover-img-dark {
-    display: block;
-  }
-  .dark .cover-img-light {
-    display: none;
-  }
-</style>
-
 <script>
   function installCoverCopyButtons() {
     document.querySelectorAll<HTMLButtonElement>('.cover-copy-link:not([data-copy-ready])').forEach((button) => {

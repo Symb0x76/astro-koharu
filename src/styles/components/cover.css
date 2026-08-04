@@ -1,0 +1,15 @@
+/* 亮/暗双顶图：随 .dark 类切换，主题过渡的渐变扫过动效负责动画揭示
+ * 注意：必须放全局 CSS——组件作用域样式会给 .dark 也加上 data-astro-cid 属性导致不匹配 */
+.cover-img {
+  position: absolute;
+  inset: 0;
+}
+.cover-img-dark {
+  display: none;
+}
+.dark .cover-img-dark {
+  display: block;
+}
+.dark .cover-img-light {
+  display: none;
+}
