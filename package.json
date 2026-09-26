@@ -105,6 +105,7 @@
     "metascraper-title": "^5.49.7",
     "metascraper-url": "^5.49.7",
     "motion": "^11.18.2",
+    "music-metadata": "^11.16.1",
     "nanostores": "^0.11.4",
     "react": "^19.2.1",
     "react-dom": "^19.2.1",
