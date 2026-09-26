@@ -1,1 +1,23 @@
-pnpm lint-staged
+#!/bin/sh
+# 编辑器/GUI 客户端拉起 git 时不会加载 shell 配置，fnm 与 pnpm 可能不在 PATH。
+# 先补齐常见的 fnm / pnpm 安装目录，再用 pnpm 运行 lint-staged；实在找不到
+# pnpm 时回退到本地安装的二进制，保证任何环境下都能提交。
+if ! command -v pnpm >/dev/null 2>&1; then
+  for dir in \
+    "${FNM_DIR:-$HOME/.local/share/fnm}/aliases/default/bin" \
+    "$HOME/Library/Application Support/fnm/aliases/default/bin" \
+    "$HOME/AppData/Roaming/fnm/aliases/default" \
+    "${PNPM_HOME:-$HOME/.local/share/pnpm}/bin" \
+    "$HOME/.local/share/pnpm"; do
+    if [ -d "$dir" ]; then
+      PATH="$dir:$PATH"
+    fi
+  done
+  export PATH
+fi
+
+if command -v pnpm >/dev/null 2>&1; then
+  pnpm lint-staged
+else
+  node_modules/.bin/lint-staged
+fi
