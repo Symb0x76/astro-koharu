@@ -70,13 +70,18 @@ function listTarEntries(archivePath: string): string[] {
  * 从 tar.gz 中提取 manifest.json 内容（不解压整个文件）
  */
 export function tarExtractManifest(archivePath: string): string | null {
-  const result = spawnSync('tar', ['-xzf', archivePath, '-O', 'manifest.json'], {
-    encoding: 'utf-8',
-    cwd: PROJECT_ROOT,
-    stdio: ['pipe', 'pipe', 'pipe'],
-  });
-  if (result.status === 0 && result.stdout) {
-    return result.stdout;
+  // tarCreate 以 `tar -C <dir> .` 打包，归档条目名为 `./manifest.json`；
+  // GNU tar 对显式成员名按字面匹配（bsdtar 会归一化 `./` 前缀，故 macOS 上不可见），
+  // 因此优先尝试带前缀的名字。
+  for (const member of ['./manifest.json', 'manifest.json']) {
+    const result = spawnSync('tar', ['-xzf', archivePath, '-O', member], {
+      encoding: 'utf-8',
+      cwd: PROJECT_ROOT,
+      stdio: ['pipe', 'pipe', 'pipe'],
+    });
+    if (result.status === 0 && result.stdout) {
+      return result.stdout;
+    }
   }
   return null;
 }
