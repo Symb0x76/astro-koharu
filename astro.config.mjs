@@ -244,6 +244,12 @@ export default defineConfig({
     pagefind(),
     mermaid({
       autoTheme: true,
+      // Subgraphs without an explicit direction inherit the root flowchart direction (mermaid >= 11.7)
+      mermaidConfig: {
+        flowchart: {
+          inheritDir: true,
+        },
+      },
     }),
     robotsTxt(robotsConfig || {}),
     ...(momentsConfig.enabled ? [momentsRoutes(momentsConfig)] : []),
